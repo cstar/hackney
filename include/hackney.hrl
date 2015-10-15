@@ -43,3 +43,9 @@
         method = nil,
         path,
         ctype = nil}).
+
+
+
+-define(DEFAULT_CACHE_SIZE, 1000).
+-define(TAB, hackney_server).
+-define(LOOKUP_CACHE, hackney_lookup).

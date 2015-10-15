@@ -6,7 +6,7 @@
 
 -module(hackney).
 -export([start/0, start/1, stop/0]).
--export([connect/1, connect/2, connect/3, connect/4,
+-export([connect/1, connect-module(hackney_new_pool)/2, connect/3, connect/4,
          close/1,
          request_info/1,
          location/1,

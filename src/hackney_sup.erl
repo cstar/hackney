@@ -16,6 +16,9 @@
 %% Supervisor callbacks
 -export([init/1]).
 
+
+-include("hackney.hrl").
+
 %% Helper macro for declaring children of supervisor
 -define(CHILD(I, Type), {I, {I, start_link, []}, permanent, 5000, Type, [I]}).
 
@@ -37,7 +40,18 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-
     Manager = ?CHILD(hackney_manager, worker),
 
-    {ok, { {one_for_one, 10, 1}, [Manager]}}.
+    %% server maintaing some meta data related to connections
+    Server = {hackney_server,
+              {hackney_server, start_link, []},
+              {permanent, 5000, worker, [hackney_server]}},
+
+    %% cache used to store host lookup prefereneces
+    CacheSize = application:get_env(hackney, lookup_cache_size, ?DEFAULT_CACHE_SIZE),
+    Cache = {?LOOKUP_LCACHE,
+             {lru, start_link, [CacheSize]},
+             {permananent, 5000, worker, [lru]}},
+
+
+    {ok, { {one_for_one, 10, 1}, [Manager, Server, Cache]}}.
